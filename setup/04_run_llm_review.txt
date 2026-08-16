@@ -1,0 +1,6 @@
+rows = load_rows_from_excel("/content/참고문헌_메타데이터.xlsx")
+rows = repair_filepaths_for_tree(rows)
+rows = run_llm_second_pass(rows)
+vision_targets = identify_vision_review_files(rows)
+save_rows_to_excel(rows, "/content/결과_2차검토완료.xlsx")
+print_batch_summary(rows)

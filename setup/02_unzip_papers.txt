@@ -1,0 +1,25 @@
+import os
+import zipfile
+import glob
+
+# 1. 압축을 풀 대상 폴더(papers) 경로 설정 및 생성
+extract_path = "/content/papers"
+os.makedirs(extract_path, exist_ok=True)
+
+# 2. Colab 기본 경로(/content/)에 업로드된 모든 zip 파일 찾기
+zip_files = glob.glob("/content/*.zip")
+
+if not zip_files:
+    print("❌ 현재 경로에 zip 파일이 없습니다. 왼쪽 폴더 탭에 파일이 업로드되었는지 확인해 주세요.")
+else:
+    # 3. 찾은 zip 파일들을 차례대로 압축 해제
+    for file in zip_files:
+        print(f"📦 압축 해제 중: {os.path.basename(file)} ... ", end="")
+        try:
+            with zipfile.ZipFile(file, 'r') as zip_ref:
+                zip_ref.extractall(extract_path)
+            print("완료!")
+        except Exception as e:
+            print(f"실패! (오류: {e})")
+    
+    print(f"\n✅ 모든 zip 파일이 {extract_path} 폴더로 해제되었습니다. (왼쪽 파일 탭에서 '새로고침'을 눌러보세요)")

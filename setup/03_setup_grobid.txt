@@ -1,0 +1,28 @@
+# 1) Java 설치 (GROBID 최신 버전은 컴파일에 Java 21이 필요합니다 - Java 11/17만 설치하면
+#    "Cannot find a Java installation ... languageVersion=21" 에러가 남)
+!apt-get -qq install -y openjdk-21-jdk-headless > /dev/null
+
+# 2) GROBID 소스 받기
+!git clone --depth 1 https://github.com/kermitt2/grobid.git /content/grobid
+
+# 3) 빌드 + 백그라운드 실행 (첫 실행은 의존성/모델 다운로드 때문에 10~20분 정도 걸립니다)
+%cd /content/grobid
+!nohup ./gradlew run > /content/grobid.log 2>&1 &
+
+
+import time, requests
+for _ in range(20):
+    try:
+        if requests.get("http://localhost:8070/api/isalive", timeout=5).status_code in (200, 206):
+            print("GROBID 준비 완료")
+            break
+    except Exception:
+        pass
+    time.sleep(30)
+else:
+    print("아직 안 떴음 - 로그 다시 확인해보세요")
+
+
+import requests
+resp = requests.get("http://localhost:8070/api/isalive")
+print(resp.status_code)  # 200 또는 206이면 정상

@@ -1,0 +1,3 @@
+!pip install -q pdfplumber
+
+!pip install -q pdfplumber pandas requests openpyxl
